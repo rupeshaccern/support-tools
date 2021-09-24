@@ -3,9 +3,9 @@ node {
     checkout scm
   }
   stage('SonarQube Analysis') {
-    def scannerHome = tool 'rupeshaccern';
+    def SONAR_HOME = tool 'rupeshaccern';
     withSonarQubeEnv() {
-      sh "${scannerHome}/bin/sonar-scanner"
+      sh "${SONAR_HOME}/bin/sonar-scanner"
     }
   }
 }
