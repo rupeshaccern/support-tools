@@ -1,8 +1,6 @@
 name: Django CI
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -26,4 +24,4 @@ jobs:
         python -m pip install --upgrade pip
     - name: Run Tests
       run: |
-        python manage.py test
+        python ./router/hello.py test
