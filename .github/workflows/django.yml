@@ -32,8 +32,8 @@ jobs:
       with:
         args: --docker
       env:
-        USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        USERNAME: ${{ secrets.DOCKER_NAME }}
+        PASSWORD: ${{ secrets.DOCKER_TOKEN }}
         TAG_NAME: "v0.0.1"
         BUILDX: "true"
 
