@@ -27,13 +27,5 @@ jobs:
     - name: Run Tests
       run: |
         python ./router/hello.py test
-    - name: Build & Push to Docker Hub
-      uses: opspresso/action-docker@master
-      with:
-        args: --docker
-      env:
-        USERNAME: ${{ secrets.DOCKER_NAME }}
-        PASSWORD: ${{ secrets.DOCKER_TOKEN }}
-        TAG_NAME: "v0.0.1"
-        BUILDX: "true"
+
 
