@@ -30,6 +30,6 @@ jobs:
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: rupesh1050/rupeshaccern
-        username: ${{ secrets.DOCKER_USER}}
+        username: ${{ secrets.DOCKER_NAME}}
         password: ${{ secrets.DOCKER_TOKEN }}
 
