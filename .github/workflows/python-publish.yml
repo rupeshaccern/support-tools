@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: support-test
-      uses: https://github.com/rupeshaccern/support-tools@1.0.0
+      uses: rupeshaccern/support-tools@main
       with:
         python-version: '3.x'
     - name: Install dependencies
