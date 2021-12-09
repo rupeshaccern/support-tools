@@ -33,6 +33,6 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: myDocker/repository
-        username: ${{ secrets.DOCKER_USERNAME }}
+        name: rupesh1050/rupeshaccern
+        username: ${{ secrets.DOCKER_NAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
