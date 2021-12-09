@@ -1,4 +1,4 @@
-name: Django CI
+name: Pipeline
 
 on:
   push:
@@ -33,7 +33,13 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
+    - uses: actions/checkout@v2
+    - name: Build the container image
+      run: docker build . --file Dockerfile --tag localbuild/testimage:latest
+    - uses: anchore/scan-action@v3
+      with:
+          image: "localbuild/testimage:latest"
+          fail-build: true
     - uses: actions/checkout@master
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
