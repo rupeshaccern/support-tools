@@ -28,8 +28,4 @@ jobs:
         pip install build
     - name: Build package
       run: python -m build
-    - name: Publish package
-      uses: rupesh1050/rupeshaccern@latest
-      with:
-        user: ${{secrets.DOCKER_NAME}}
-        password: ${{ secrets.DOCKER_TOKEN }}
+
