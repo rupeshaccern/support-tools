@@ -1,6 +1,8 @@
 name: Django CI
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -25,3 +27,9 @@ jobs:
     - name: Run Tests
       run: |
         python ./router/hello.py test
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: rupesh1050/rupeshaccern
+        username: ${{ secrets.DOCKER_USER}}
+        password: ${{ secrets.DOCKER_TOKEN }}
+
