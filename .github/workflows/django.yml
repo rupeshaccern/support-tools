@@ -29,15 +29,6 @@ jobs:
     - name: Run Tests
       run: |
         python ./router/hello.py test
-    - uses: actions/checkout@master
-    - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
-      with:
-        name: rupesh1050/rupeshaccern
-        username: ${{ secrets.DOCKER_NAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        dockerfile: Dockerfile
-        tag_with_ref: registry
     - uses: actions/checkout@v2
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting
@@ -47,3 +38,13 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+    - uses: actions/checkout@master
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: rupesh1050/rupeshaccern
+        username: ${{ secrets.DOCKER_NAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        dockerfile: Dockerfile
+        tag_with_ref: registry
