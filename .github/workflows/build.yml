@@ -39,7 +39,7 @@ jobs:
     - uses: anchore/scan-action@v3
       with:
           image: "localbuild/testimage:latest"
-          fail-build: true
+          fail-build: false
     - uses: actions/checkout@master
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
