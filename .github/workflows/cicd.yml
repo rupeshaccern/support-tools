@@ -2,8 +2,6 @@ name: workflow
 on:
   push:
     branches: [ main, release ]
-  pull_request:
-    branches: [ release ]
   workflow_dispatch:
 
 jobs:
@@ -61,7 +59,7 @@ jobs:
   DeployTest:
     name: Deploy to Test 
     if: github.event.ref == 'refs/heads/release'
-    needs: [DeployDev]
+    needs: [Build]
     runs-on: ubuntu-latest
     environment: 
       name: Staging
