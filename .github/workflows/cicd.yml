@@ -59,7 +59,7 @@ jobs:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       
   DeployTest:
-    name: Deploy to Staging 
+    name: Deploy to Test 
     needs: [DeployDev]
     runs-on: ubuntu-latest
     environment: 
