@@ -1,9 +1,9 @@
 name: workflow
 on:
   push:
-    branches: [ main ]
-  release:
-    types: [published]
+    branches: [ main, release ]
+  pull_request:
+    branches: [ release ]
   workflow_dispatch:
 
 jobs:
