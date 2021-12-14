@@ -2,8 +2,6 @@ name: workflow
 on:
   push:
     branches: [ main, release ]
-  pull_request:
-    branches: [ release ]
   workflow_dispatch:
 
 jobs:
@@ -61,7 +59,7 @@ jobs:
   DeployTest:
     name: Deploy to Test 
     if: github.event.ref == 'refs/heads/release'
-    needs: [DeployDev]
+    needs: [Build]
     runs-on: ubuntu-latest
     environment: 
       name: Staging
@@ -131,4 +129,7 @@ jobs:
           username: ${{ secrets.DOCKER_NAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: Dockerfile
-          tag_with_ref: registry
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
