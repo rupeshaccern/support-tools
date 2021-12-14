@@ -73,8 +73,7 @@ jobs:
           
   DeployTest:
     name: Deploy to Test 
-    if: github.event.ref == 'refs/heads/release'
-    needs: [Build]
+    needs: [DeployDev]
     runs-on: ubuntu-latest
     environment: 
       name: Staging
