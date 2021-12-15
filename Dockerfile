@@ -6,8 +6,8 @@ ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 RUN apk add --no-cache gcc musl-dev linux-headers
 COPY requirements.txt requirements.txt
-RUN sudo /usr/local/bin/python -m pip install --upgrade pip
-RUN sudo pip install -r requirements.txt
+RUN  /usr/local/bin/python -m pip install --upgrade pip sudo
+RUN sudo pip install -r requirements.txt sudo
 EXPOSE 5000
 COPY . .
 CMD ["flask", "run"]
