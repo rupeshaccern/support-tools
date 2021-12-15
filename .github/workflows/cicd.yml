@@ -85,7 +85,7 @@ jobs:
           username: ${{ secrets.DOCKER_NAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: Dockerfile
-          tag_with_ref: $RELEASE_VERSION
+          tag_with_ref: vars.RELEASE_VERSION
           
   DeployTest:
     name: Deploy to Test 
