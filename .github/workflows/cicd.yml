@@ -25,9 +25,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Analysing the code with pylint
-        run: |
-          pylint `ls -R|grep .py$|xargs`
       - name: Run Tests
         run: |
           python ./test/hello.py test
@@ -56,7 +53,7 @@ jobs:
 
     # Extract branch name
     - id: extract_branch
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'push'
       run: echo "::set-output name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
     
     # Run Ponicode Unit-Testing Action
@@ -68,7 +65,7 @@ jobs:
         ponicodeUtToken: ${{ secrets.PONICODE_TOKEN }} # DO NOT MODIFY
         impactedFiles: ${{ steps.get_changed_files.outputs.added_modified }} # DO NOT MODIFY IF YOU WANT TO GENERATE TESTS ON PR IMPACTED FILES ONLY
         commentUTs: "false"
-        
+
   DeployDev:
     name: Deploy to Dev 
     if: |
