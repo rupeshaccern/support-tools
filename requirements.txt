@@ -1,2 +1,5 @@
 flask
 redis
+pytest  
+pre-commit==2.13.0
+pylint==2.8.3
