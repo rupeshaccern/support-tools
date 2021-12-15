@@ -1,6 +1,10 @@
 name: workflow
 on:
   push:
+    branches: [ dev ]
+    tags:
+      - 'v*.*.*'
+  pull_request:
     branches: [ main, release ]
     tags:
       - 'v*.*.*'
@@ -53,7 +57,9 @@ jobs:
 
     # Extract branch name
     - id: extract_branch
-      if: github.event_name == 'push'
+      if: |
+       github.event_name == 'push' ||
+       github.event_name == 'pull_request'
       run: echo "::set-output name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
     
     # Run Ponicode Unit-Testing Action
@@ -69,9 +75,8 @@ jobs:
   DeployDev:
     name: Deploy to Dev 
     if: |
-     github.event.ref == 'refs/heads/main' ||
-      github.event.ref == 'refs/tags/*'
-    needs: [build , test ]
+     github.event.ref == 'refs/heads/dev'
+    needs: [build , test, ponicode ]
     runs-on: ubuntu-latest
     environment: 
       name: Dev
@@ -111,9 +116,10 @@ jobs:
   DeployTest:
     name: Deploy to Test 
     if: |
+     github.event.ref == 'refs/heads/main' ||
      github.event.ref == 'refs/heads/release' ||
       github.event.ref == 'refs/tags/*'
-    needs: [build , test ]
+    needs: [build , test, ponicode ]
     runs-on: ubuntu-latest
     environment: 
       name: Staging
@@ -136,6 +142,9 @@ jobs:
       
   DeployStaging:
     name: Deploy to Staging 
+    if: |
+     github.event.ref == 'refs/heads/release' ||
+      github.event.ref == 'refs/tags/*'
     needs: [DeployTest]
     runs-on: ubuntu-latest
     environment: 
