@@ -1,6 +1,10 @@
 name: workflow
 on:
   push:
+    branches: [ dev ]
+    tags:
+      - 'v*.*.*'
+  pull_request:
     branches: [ main, release ]
     tags:
       - 'v*.*.*'
@@ -23,11 +27,11 @@ jobs:
         pip install -r requirements.txt
 
   test:
+    name: testing the code
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - name: Analysing the code with pylint
-        run: |
-          pylint `ls -R|grep .py$|xargs`
+      - uses: actions/checkout@v2
       - name: Run Tests
         run: |
           python ./test/hello.py test
@@ -39,42 +43,12 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  ponicode:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - run: |
-        npm install -g ponicode
-        npm i --save-dev rewire @types/rewire jest@26 ts-jest@26 @types/jest
-    
-    # Identify which files are impacted by the Push / PR
-    - id: get_changed_files
-      uses: jitterbit/get-changed-files@v1
-      continue-on-error: true
-      with:
-        format: 'json'
 
-    # Extract branch name
-    - id: extract_branch
-      if: github.event_name == 'pull_request'
-      run: echo "::set-output name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
-    
-    # Run Ponicode Unit-Testing Action
-    - uses: ponicode/unit-testing-action@master
-      with:
-        repoURL: ${{github.repository}} # DO NOT MODIFY
-        branch: ${{ steps.extract_branch.outputs.BRANCH_NAME }} # DO NOT MODIFY
-        githubToken: ${{ secrets.GITHUB_TOKEN }} # DO NOT MODIFY
-        ponicodeUtToken: ${{ secrets.PONICODE_TOKEN }} # DO NOT MODIFY
-        impactedFiles: ${{ steps.get_changed_files.outputs.added_modified }} # DO NOT MODIFY IF YOU WANT TO GENERATE TESTS ON PR IMPACTED FILES ONLY
-        commentUTs: "false"
-        
   DeployDev:
     name: Deploy to Dev 
     if: |
-     github.event.ref == 'refs/heads/main' ||
-      github.event.ref == 'refs/tags/*'
-    needs: [build , test ]
+     github.event.ref == 'refs/heads/dev'
+    needs: [build , test  ]
     runs-on: ubuntu-latest
     environment: 
       name: Dev
@@ -114,6 +88,7 @@ jobs:
   DeployTest:
     name: Deploy to Test 
     if: |
+     github.event.ref == 'refs/heads/main' ||
      github.event.ref == 'refs/heads/release' ||
       github.event.ref == 'refs/tags/*'
     needs: [build , test ]
@@ -139,6 +114,9 @@ jobs:
       
   DeployStaging:
     name: Deploy to Staging 
+    if: |
+     github.event.ref == 'refs/heads/release' ||
+      github.event.ref == 'refs/tags/*'
     needs: [DeployTest]
     runs-on: ubuntu-latest
     environment: 
