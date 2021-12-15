@@ -55,11 +55,25 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      
+      - name: Build the container image
+        run: docker build . --file Dockerfile --tag localbuild/testimage:latest
+      - uses: anchore/scan-action@v3
+        with:
+            image: "localbuild/testimage:latest"
+            fail-build: false
+      - uses: actions/checkout@master
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: rupesh1050/rupeshaccern
+          username: ${{ secrets.DOCKER_NAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: Dockerfile
+          tag_with_ref: registry
+          
   DeployTest:
     name: Deploy to Test 
-    if: github.event.ref == 'refs/heads/release'
-    needs: [Build]
+    needs: [DeployDev]
     runs-on: ubuntu-latest
     environment: 
       name: Staging
