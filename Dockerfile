@@ -3,7 +3,7 @@ FROM python:3.10.1-alpine3.15
 LABEL MAINTAINER Rupesh Kumar rupesh.kumar@accern.com
 WORKDIR /code
 RUN python3 -m venv code-env
-RUN source tutorial-env/bin/activate
+RUN source code-env/bin/activate
 RUN  /usr/local/bin/python -m pip install --upgrade pip sudo
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt sudo
