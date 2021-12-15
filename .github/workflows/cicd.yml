@@ -25,16 +25,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set output
-        id: vars
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
-      - name: Check output
-        env:
-          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+      - name: Analysing the code with pylint
         run: |
-          echo $RELEASE_VERSION
-          echo ${{ steps.vars.outputs.tag }}
+          pylint `ls -R|grep .py$|xargs`
       - name: Run Tests
         run: |
           python ./test/hello.py test
@@ -46,6 +39,36 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  ponicode:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - run: |
+        npm install -g ponicode
+        npm i --save-dev rewire @types/rewire jest@26 ts-jest@26 @types/jest
+    
+    # Identify which files are impacted by the Push / PR
+    - id: get_changed_files
+      uses: jitterbit/get-changed-files@v1
+      continue-on-error: true
+      with:
+        format: 'json'
+
+    # Extract branch name
+    - id: extract_branch
+      if: github.event_name == 'pull_request'
+      run: echo "::set-output name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
+    
+    # Run Ponicode Unit-Testing Action
+    - uses: ponicode/unit-testing-action@master
+      with:
+        repoURL: ${{github.repository}} # DO NOT MODIFY
+        branch: ${{ steps.extract_branch.outputs.BRANCH_NAME }} # DO NOT MODIFY
+        githubToken: ${{ secrets.GITHUB_TOKEN }} # DO NOT MODIFY
+        ponicodeUtToken: ${{ secrets.PONICODE_TOKEN }} # DO NOT MODIFY
+        impactedFiles: ${{ steps.get_changed_files.outputs.added_modified }} # DO NOT MODIFY IF YOU WANT TO GENERATE TESTS ON PR IMPACTED FILES ONLY
+        commentUTs: "false"
+        
   DeployDev:
     name: Deploy to Dev 
     if: |
@@ -85,7 +108,7 @@ jobs:
           username: ${{ secrets.DOCKER_NAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: Dockerfile
-          tags: $RELEASE_VERSION
+          tag_with_ref: 'refs/*'
           labels: ${{ steps.meta.outputs.labels }}
           
   DeployTest:
@@ -164,5 +187,5 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: Dockerfile
           context: .
-          tags: $RELEASE_VERSION
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
