@@ -33,7 +33,12 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    
+    - name: Set output
+      id: vars
+      run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+    - name: Check output
+      env:
+        RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
   DeployDev:
     name: Deploy to Dev 
     if: github.event.ref == 'refs/heads/main'
@@ -71,11 +76,13 @@ jobs:
           username: ${{ secrets.DOCKER_NAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: Dockerfile
-          tag_with_ref: registry
+          tag_with_ref: $RELEASE_VERSION
           
   DeployTest:
     name: Deploy to Test 
-    if: github.event.ref == 'refs/heads/release' || github.event.ref == 'refs/tags/*'
+    if: |
+     github.event.ref == 'refs/heads/release' ||
+      github.event.ref == 'refs/tags/*'
     needs: [build]
     runs-on: ubuntu-latest
     environment: 
