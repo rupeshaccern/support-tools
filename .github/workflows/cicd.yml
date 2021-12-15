@@ -85,7 +85,8 @@ jobs:
           username: ${{ secrets.DOCKER_NAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: Dockerfile
-          tag_with_ref: vars.RELEASE_VERSION
+          tags: $RELEASE_VERSION
+          labels: ${{ steps.meta.outputs.labels }}
           
   DeployTest:
     name: Deploy to Test 
@@ -163,6 +164,5 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: Dockerfile
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: $RELEASE_VERSION
           labels: ${{ steps.meta.outputs.labels }}
