@@ -22,7 +22,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        python ./router/hello.py test
+        python ./test/hello.py test
     - uses: actions/checkout@v2
       with:
          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
