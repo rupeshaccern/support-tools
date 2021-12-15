@@ -1,4 +1,7 @@
 version: 2.1
+orbs:
+  python: circleci/python@1.5.0
+  docker: circleci/docker@2.0.1
 jobs:
   build:
     docker:
@@ -15,12 +18,50 @@ jobs:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
             - "venv"
-      - run:
-          command: |
-            . venv/bin/activate
-            python ./test/hello.py test
-      - store_artifacts:
-          path: test-reports/
-          destination: tr1
-      - store_test_results:
-          path: test-reports/
+
+  test:
+      docker:
+        # replace with your preferred image
+        - image: cimg/python:3.10.1
+      steps:
+        - python/install-packages
+        - run:
+            command: |
+              . venv/bin/activate
+              python ./test/hello.py test
+        - store_artifacts:
+            path: test-reports/
+            destination: tr1
+        - store_test_results:
+            path: test-reports/
+  docker-build:
+    docker:
+      # replace with your preferred image
+      - image: cimg/base:stable
+    steps:
+      - docker/build:
+          attach-at: ./ 
+          dockerfile: Dockerfile 
+          image: circleci 
+          tag: $CIRCLE_SHA1 
+          registry: https://hub.docker.com/u/rupesh1050
+      - docker/dockerlint:
+          dockerfile: Dockerfile
+workflows:
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - docker-build:
+         requires:
+           - test
+      - docker/publish:
+          image: circleci  
+          lint-dockerfile: true 
+          dockerfile: Dockerfile 
+          docker-password: DOCKER_NAME
+          docker-username: DOCKER_PASSWORD
+          registry: https://hub.docker.com/u/rupesh1050
+          
