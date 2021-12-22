@@ -3,9 +3,11 @@ pipeline {
 
     stages {
         stage('Build') {
-            steps {
-                sh 'sudo -S docker build -t ${JOB_NAME}-${BUILD_NUMBER} . && sudo -S python3 -m pip install --upgrade pip && pip install -r requirements.txt'
-                python3 'router/app.py'
+            steps { 
+                withEnv(["HOME=${env.WORKSPACE}"]){
+                 sh 'sudo -S docker build -t ${JOB_NAME}-${BUILD_NUMBER} . && sudo -S python3 -m pip install --upgrade pip && pip install -r requirements.txt'
+                 sh 'python3 router/app.py'
+                }
             }
         }
         stage('Test') {
