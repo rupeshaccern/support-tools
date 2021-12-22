@@ -1,6 +1,5 @@
 pipeline {
     agent {Dokerfile true}
-    }
     stages {
         stage('Build') {
             steps {
