@@ -1,4 +1,5 @@
 pipeline {
+    agent none
   stage('SCM') {
     checkout scm
   }
