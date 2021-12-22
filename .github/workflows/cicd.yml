@@ -1,11 +1,11 @@
 name: workflow
 on:
   push:
-    branches: [ dev ]
+    branches: [ dev, main ]
     tags:
       - 'v*.*.*'
   pull_request:
-    branches: [ main, release ]
+    branches: [ release ]
     tags:
       - 'v*.*.*'
   workflow_dispatch:
