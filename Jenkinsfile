@@ -4,7 +4,6 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'python -m pip install --upgrade pip $$ pip install -r requirements.txt'
                 sh 'python -m py_compile sources/router/app.py '
                 stash(name: 'compiled-results', includes: 'sources/*.py*')
             }
