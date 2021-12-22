@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t ${JOB_NAME}-${BUILD_NUMBER} .'
+                sh 'python -m pip install --upgrade pip'
             }
         }
         stage('Test') {
