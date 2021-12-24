@@ -1,21 +1,23 @@
 pipeline {
-    agent {Dokerfile true}
-    }
+    agent any
+
     stages {
         stage('Build') {
-            steps {
-                sh 'python -m py_compile sources/router/app.py '
-                stash(name: 'compiled-results', includes: 'sources/*.py*')
+            steps { 
+                withEnv(["HOME=${env.WORKSPACE}"]){
+                 sh 'sudo -S docker build -t ${JOB_NAME}-${BUILD_NUMBER} . && sudo -S python3 -m pip install --upgrade pip && pip install -r requirements.txt'
+                 sh 'python3 router/app.py'
+                }
             }
         }
-        stage('Test') { 
+        stage('Test') {
             steps {
-                sh 'py.test --junit-xml test-reports/results.xml sources/test/hello.py' 
+                sh 'python3 ./test/hello.py test'
             }
-            post {
-                always {
-                    junit 'test-reports/results.xml' 
-                }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
             }
         }
     }
