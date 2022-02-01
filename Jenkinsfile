@@ -6,7 +6,7 @@ pipeline {
 
             steps { 
                 withEnv(["HOME=${env.WORKSPACE}"]){
-                 sh 'docker build -t ${JOB_NAME}-${BUILD_NUMBER} Dockerfile '
+                 sh 'docker build -t ${JOB_NAME}-${BUILD_NUMBER} . '
 
                 }
             }
