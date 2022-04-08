@@ -6,7 +6,7 @@ pipeline {
 
             steps { 
                 withEnv(["HOME=${env.WORKSPACE}"]){
-                 sh 'sudo -S docker build -t ${JOB_NAME}-${BUILD_NUMBER} . '
+                 echo 'build....'
 
                 }
             }
