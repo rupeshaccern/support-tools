@@ -12,9 +12,6 @@ pipeline {
             }
         }
         stage('Test') {
-            agent {
-                docker { image 'python:3.7-alpine' }
-            }
             steps {
                 sh ' python3 -m pip install --upgrade pip && pip install -r requirements.txt'
                  sh 'python3 router/app.py'
